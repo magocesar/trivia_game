@@ -15,10 +15,10 @@ class GameActivityViewModel(application: Application) : BaseViewModel(applicatio
     val option3 = MutableLiveData<String>()
     val option4 = MutableLiveData<String>()
 
-    val option1Color = MutableLiveData<Color>(Color.Blue)
-    val option2Color = MutableLiveData<Color>(Color.Blue)
+    val option1Color = MutableLiveData<Color>(Color.Cyan)
+    val option2Color = MutableLiveData<Color>(Color.Magenta)
     val option3Color = MutableLiveData<Color>(Color.Blue)
-    val option4Color = MutableLiveData<Color>(Color.Blue)
+    val option4Color = MutableLiveData<Color>(Color.Gray)
 
     private val buttonsEnabled = MutableLiveData<Boolean>(true)
 
@@ -28,10 +28,10 @@ class GameActivityViewModel(application: Application) : BaseViewModel(applicatio
     fun getQuestionsFromApi(){
 
         //Reset the colors of the options
-        option1Color.value = Color.Blue
-        option2Color.value = Color.Blue
+        option1Color.value = Color.Cyan
+        option2Color.value = Color.Magenta
         option3Color.value = Color.Blue
-        option4Color.value = Color.Blue
+        option4Color.value = Color.Gray
 
         //Enable the buttons
         buttonsEnabled.value = true

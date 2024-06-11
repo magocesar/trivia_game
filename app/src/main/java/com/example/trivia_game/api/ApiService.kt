@@ -1,6 +1,5 @@
 package com.example.trivia_game.api
 
-
 import retrofit2.http.GET
 import retrofit2.http.Query
 

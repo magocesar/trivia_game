@@ -63,7 +63,7 @@ fun HomeScreen(vm : HomeScreenViewModel){
     }
 
     Box(
-        modifier = Modifier.fillMaxSize().background(Color.Yellow),
+        modifier = Modifier.fillMaxSize().background(Color.White),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

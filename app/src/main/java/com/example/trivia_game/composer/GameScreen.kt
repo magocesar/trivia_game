@@ -1,9 +1,11 @@
 package com.example.trivia_game.composer
 
 import android.content.Intent
-import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +21,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import com.example.trivia_game.MainActivity
 import com.example.trivia_game.R
 import com.example.trivia_game.ScoreboardActivity
 import com.example.trivia_game.view_model.GameActivityViewModel
@@ -49,10 +51,10 @@ fun GameScreen(vm : GameActivityViewModel, username : String){
     val option3 = remember { mutableStateOf("") }
     val option4 = remember { mutableStateOf("") }
 
-    val option1Color = remember { mutableStateOf(Color.Blue) }
-    val option2Color = remember { mutableStateOf(Color.Blue) }
+    val option1Color = remember { mutableStateOf(Color.Cyan) }
+    val option2Color = remember { mutableStateOf(Color.Magenta) }
     val option3Color = remember { mutableStateOf(Color.Blue) }
-    val option4Color = remember { mutableStateOf(Color.Blue) }
+    val option4Color = remember { mutableStateOf(Color.Gray) }
 
     val images = listOf(
         R.drawable.one,
@@ -67,10 +69,13 @@ fun GameScreen(vm : GameActivityViewModel, username : String){
 
     val imageIndex = remember { mutableIntStateOf(Random.nextInt(0, 8)) }
 
+    val selectedImage = remember { mutableIntStateOf(images[imageIndex.intValue]) }
+
     LaunchedEffect(vm.question) {
         vm.question.observeForever {
             question.value = it
             imageIndex.intValue = (imageIndex.intValue + 1) % images.size
+            selectedImage.intValue = images[imageIndex.intValue]
         }
     }
 
@@ -126,23 +131,22 @@ fun GameScreen(vm : GameActivityViewModel, username : String){
         vm.getQuestionsFromApi()
     }
 
-    val imageResource: Int by animateIntAsState(targetValue = images[imageIndex.intValue], label = "img")
-
     Box(
-        modifier = Modifier.fillMaxSize().background(Color.Yellow),
+        modifier = Modifier.fillMaxSize().background(Color.White),
         contentAlignment = Alignment.Center
     ){
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Trivia Game",
-                style = TextStyle(fontSize = 30.sp),
+                text = "Test your Geography Knowledge!",
+                style = TextStyle(fontSize = 24.sp),
+                textAlign = TextAlign.Justify
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            androidx.compose.animation.Crossfade(targetState = images[imageIndex.intValue],
+            Crossfade(targetState = images[imageIndex.intValue], animationSpec = tween(1000),
                 label = "img"
             ) { selectedImage ->
                 Image(painter = painterResource(id = selectedImage), contentDescription = "Logo Trivia Game")
@@ -151,11 +155,10 @@ fun GameScreen(vm : GameActivityViewModel, username : String){
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = question.value?:"",
+                text = ("Question : " + "\n" + question.value) ?: "",
                 style = TextStyle(fontSize = 20.sp),
                 modifier = Modifier.padding(16.dp),
                 textAlign = TextAlign.Justify
-
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -173,7 +176,7 @@ fun GameScreen(vm : GameActivityViewModel, username : String){
                             option1Color.value,
                             contentColor = Color.White
                         ),
-                        modifier = Modifier.width(150.dp).height(50.dp)
+                        modifier = Modifier.weight(1f).height(100.dp).border(2.dp, Color.Black)
                     ) {
                         Text(option1.value?:"")
                     }
@@ -184,12 +187,11 @@ fun GameScreen(vm : GameActivityViewModel, username : String){
                             option2Color.value,
                             contentColor = Color.White
                         ),
-                        modifier = Modifier.width(150.dp).height(50.dp)
+                        modifier = Modifier.weight(1f).height(100.dp).border(2.dp, Color.Black)
                     ) {
                         Text(option2.value?:"")
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     modifier = Modifier.fillMaxWidth()
@@ -201,7 +203,7 @@ fun GameScreen(vm : GameActivityViewModel, username : String){
                             option3Color.value,
                             contentColor = Color.White
                         ),
-                        modifier = Modifier.width(150.dp).height(50.dp)
+                        modifier = Modifier.weight(1f).height(100.dp).border(2.dp, Color.Black)
                     ) {
                         Text(option3.value?:"")
                     }
@@ -212,7 +214,7 @@ fun GameScreen(vm : GameActivityViewModel, username : String){
                             option4Color.value,
                             contentColor = Color.White
                         ),
-                        modifier = Modifier.width(150.dp).height(50.dp)
+                        modifier = Modifier.weight(1f).height(100.dp).border(2.dp, Color.Black)
                     ) {
                         Text(option4.value?:"")
                     }
@@ -232,9 +234,9 @@ fun GameScreen(vm : GameActivityViewModel, username : String){
                         Color.Blue,
                         contentColor = Color.White
                     ),
-                    modifier = Modifier.width(150.dp).height(50.dp)
+                    modifier = Modifier.width(120.dp).height(50.dp)
                 ) {
-                    Text(text = "Next Question")
+                    Text(text = "Refresh")
                 }
                 Button(
                     onClick = {
@@ -247,12 +249,25 @@ fun GameScreen(vm : GameActivityViewModel, username : String){
                         Color.Blue,
                         contentColor = Color.White
                     ),
-                    modifier = Modifier.width(150.dp).height(50.dp)
+                    modifier = Modifier.width(120.dp).height(50.dp)
                 ) {
                     Text(text = "Top Scores")
+                }
+                Button(
+                    onClick = {
+                        val intent = Intent(context, MainActivity::class.java)
+                        ContextCompat.startActivity(context, intent, null)
+                    },
+                    shape = RectangleShape,
+                    colors = ButtonDefaults.buttonColors(
+                        Color.Blue,
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.width(120.dp).height(50.dp)
+                ) {
+                    Text(text = "Log Out")
                 }
             }
         }
     }
 }
-
